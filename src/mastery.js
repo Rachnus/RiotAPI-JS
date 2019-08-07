@@ -4,12 +4,10 @@ const Api       = require('./api.js');
  * Mastery Class
  *
  */
-class Mastery extends Api.ApiObject
+class Mastery
 {
     constructor(summoner_id = null, champion_id = null, api_callback = null)
     {
-        super(api_callback);
-
         this.m_bChestGranted = false;
         this.m_iChampionLevel = -1;
         this.m_iChampionPoints = -1;
@@ -35,16 +33,14 @@ class Mastery extends Api.ApiObject
      */
     getData(summoner_id, champion_id, api_callback = null)
     {
-        this.m_fApiCallback = api_callback;
-
         this.m_eRequestStatus = Api.REQUEST_STATUS.REQUESTING; 
         var self = this;
         Api.Request(Api.BuildURL(`lol/champion-mastery/v4/champion-masteries/by-summoner/${summoner_id}/by-champion/${champion_id}`), function(error, response, body){
-            Mastery._mastery_api_callback(error, response, body, self);
+            Mastery._mastery_api_callback(error, response, body, api_callback, self);
         });
     }
 
-    static _mastery_api_callback(error, response, body, mastery)
+    static _mastery_api_callback(error, response, body, api_callback, mastery)
     {
         var validCall = Api.IsValidApiCall(response.statusCode);
         
@@ -57,8 +53,8 @@ class Mastery extends Api.ApiObject
             json = JSON.parse(body);
         
         mastery.parseMasteryJSON(json);
-        if(mastery.m_fApiCallback != null)
-            mastery.m_fApiCallback(mastery, validCall);
+        if(api_callback != null)
+            api_callback(mastery, validCall);
     }
 
     /**

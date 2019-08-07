@@ -1,29 +1,9 @@
 const Request             = require('request');
 const ApiKey              = require('../apikey.js');
 
-var REQUEST_STATUS =
+function BuildURLParams(api_path, params)
 {
-    INVALID:   -1,
-    NONE:       0,
-    REQUESTING: 1,
-    DONE:       2
-}
-
-
-/**
- * ApiObject Class
- * 
- * api_callback prototype: function(<json>, <success>)
- * @param json       json data from api request
- * @param success    wether or not the api call was successful (status code 200)
- */
-class ApiObject
-{
-    constructor(api_callback = null)
-    {
-        this.m_fApiCallback = api_callback;
-        this.m_eRequestStatus = REQUEST_STATUS.NONE;
-    }
+    return BuildCustomURL(ApiKey.API_URL, api_path, ApiKey.API_KEY + params);
 }
 
 function BuildURL(api_path)
@@ -58,13 +38,11 @@ var RIOT_HTTP_STATUS_CODE =
 
 module.exports =
 {
-    REQUEST_STATUS:       REQUEST_STATUS,
-    ApiKey:               ApiKey,
-    Request:              Request,
+    ApiKey,
+    Request,
 
-    ApiObject,
-
-    BuildURL:             BuildURL,
-    BuildCustomURL:       BuildCustomURL,
-    IsValidApiCall:       IsValidApiCall
+    BuildURL,
+    BuildCustomURL,
+    BuildURLParams,
+    IsValidApiCall
 };
