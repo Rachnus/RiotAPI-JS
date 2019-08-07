@@ -1,15 +1,5 @@
 const Api       = require('./api.js');
 
-var SUMMONER_API_DATA
-{
-    NONE = 0,
-    CHAMPION_MASTERY = 1,
-    TOTAL_MASTERY = 2,
-    LEAGUE = 4,
-    MATCH_LIST= 8,
-    ACTIVE_GAME = 16
-}
-
 /**
  * Mastery Class
  *

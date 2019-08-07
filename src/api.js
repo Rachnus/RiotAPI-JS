@@ -1,14 +1,12 @@
 const Request             = require('request');
 const ApiKey              = require('../apikey.js');
 
-const API_URL             = 'https://euw1.api.riotgames.com'
-
 var REQUEST_STATUS =
 {
-    INVALID: -1,
-    NONE: 0,
+    INVALID:   -1,
+    NONE:       0,
     REQUESTING: 1,
-    DONE: 2
+    DONE:       2
 }
 
 
@@ -30,7 +28,7 @@ class ApiObject
 
 function BuildURL(api_path)
 {
-    return BuildCustomURL(API_URL, api_path, ApiKey.API_KEY);
+    return BuildCustomURL(ApiKey.API_URL, api_path, ApiKey.API_KEY);
 }
 
 function BuildCustomURL(api_url, api_path, api_key)
@@ -60,7 +58,7 @@ var RIOT_HTTP_STATUS_CODE =
 
 module.exports =
 {
-	REQUEST_STATUS:       REQUEST_STATUS,
+    REQUEST_STATUS:       REQUEST_STATUS,
     ApiKey:               ApiKey,
     Request:              Request,
 

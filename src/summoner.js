@@ -3,14 +3,14 @@ const Mastery   = require('./mastery.js');
 
 var SUMMONER_API_DATA =
 {
-    NONE              : 0,
-    CHAMPION_MASTERY  : 1,
-    TOTAL_MASTERY     : 2,
-    LEAGUE            : 4,
-    MATCH_LIST        : 8,
-    ACTIVE_GAME       : 16,
+    NONE:                  0,
+    CHAMPION_MASTERY:      1,
+    TOTAL_MASTERY:         2,
+    LEAGUE:                4,
+    MATCH_LIST:            8,
+    ACTIVE_GAME:           16,
 
-    MAX_SUMMONER_API_DATA : 16
+    MAX_SUMMONER_API_DATA: 16
 }
 
 /**
@@ -290,17 +290,11 @@ class Summoner extends Api.ApiObject
      */
     parseChampionMasteryJSON(json)
     {
-       // console.log(json.length);
         for(var i = 0; i < json.length; i++)
         {
             var mastery = new Mastery.Mastery();
             mastery.parseMasteryJSON(json[i]);
             this.m_ChampionMasteries.push(mastery);
-        }
-
-        for(var i = 0; i < this.m_ChampionMasteries.length; i++)
-        {
-            console.log(this.m_ChampionMasteries[i].m_iChampionID);
         }
     }
 }
