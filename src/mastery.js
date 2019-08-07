@@ -21,7 +21,7 @@ class Mastery
         this.m_eRequestStatus = Api.REQUEST_STATUS.NONE;
 
         if(summoner_id != null && champion_id != null)
-            this.getData(summoner_id, api_callback);
+            this.queryData(summoner_id, api_callback);
     }
 
     /**
@@ -31,7 +31,7 @@ class Mastery
      * @param api_callback         function to call when request is complete
      * @return void
      */
-    getData(summoner_id, champion_id, api_callback = null)
+    queryData(summoner_id, champion_id, api_callback = null)
     {
         this.m_eRequestStatus = Api.REQUEST_STATUS.REQUESTING; 
         var self = this;
@@ -76,6 +76,35 @@ class Mastery
         this.m_iTokensEarned = json.tokensEarned;
         this.m_iChampionPointsSinceLastLevel = json.championPointsSinceLastLevel;
         this.m_szSummonerID = json.summonerId;
+    }
+
+    /**
+     * Parses champion mastery JSON data (List)
+     *
+     * @param json                 json data (string)
+     * @return Mastery[]
+     */
+    static parseSummonerMasteriesJSON(json)
+    {
+        var masteries = [];
+        for(var i = 0; i < json.length; i++)
+        {
+            var mastery = new Mastery();
+            mastery.parseMasteryJSON(json[i]);
+            masteries.push(mastery);
+        }
+        return masteries;
+    }
+
+    /**
+     * Parses total mastery score JSON data
+     *
+     * @param json                 json data (string)
+     * @return int
+     */
+    static parseTotalMasteryJSON(json)
+    {
+        return json;
     }
 }
 

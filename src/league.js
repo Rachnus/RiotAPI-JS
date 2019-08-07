@@ -59,6 +59,50 @@ class SummonerLeague
     {
         this.m_eQueueType = queue_type;
     }
+
+    /**
+     * Parses summoner league JSON data
+     *
+     * @param json                 json data (string)
+     * @return SummonerLeague[]
+     */
+    static parseLeagueJSON(json)
+    {
+        var leagues = [];
+        for(var i = 0; i < json.length; i++)
+        {
+            var leagueObj = json[i];
+
+            var miniSeries = null;
+            var jsonMiniSeries = json[i].miniSeries;
+            if(jsonMiniSeries != null)
+            {
+                miniSeries = new MiniSeriesDTO(jsonMiniSeries.progress, 
+                                               jsonMiniSeries.target, 
+                                               jsonMiniSeries.losses, 
+                                               jsonMiniSeries.wins);
+            }
+
+            var league = new SummonerLeague(leagueObj.queueType,
+                                            leagueObj.summonerName,
+                                            leagueObj.hotStreak,
+                                            miniSeries,
+                                            leagueObj.wins,
+                                            leagueObj.veteran,
+                                            leagueObj.losses,
+                                            leagueObj.rank,
+                                            leagueObj.leagueId,
+                                            leagueObj.inactive,
+                                            leagueObj.freshBlood,
+                                            leagueObj.tier,
+                                            leagueObj.summonerId,
+                                            leagueObj.leaguePoints);
+
+            league.setQueueType(League.QueueTypeNameToId(league.m_szQueueType));
+            leagues.push(league);
+        }
+        return leagues;
+    }
 }
 
 function QueueTypeNameToId(queue_type)

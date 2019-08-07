@@ -2,6 +2,7 @@ const Api       = require('./api.js');
 const Mastery   = require('./mastery.js');
 const League    = require('./league.js');
 const Match     = require('./match.js');
+const Game      = require('./game.js');
 
 var SUMMONER_API_DATA =
 {
@@ -55,17 +56,20 @@ class Summoner
         this.m_ChampionMasteries  = [];
 
         // Leagues
-        this.m_Leagues = [];
+        this.m_Leagues            = [];
 
         // Matches
-        this.m_Matches = [];
+        this.m_Matches            = [];
+
+        // Active Game
+        this.m_ActiveGame         = null;
 
         if(summoner_name != null)
-            this.getDataByName(summoner_name, data_flags, api_callback);
+            this.queryDataByName(summoner_name, data_flags, api_callback);
     }
 
     /**
-     * Gets summoner data from Riot API by summoner name
+     * Query summoner data from Riot API by summoner name
      *
      * https://developer.riotgames.com/api-methods/#summoner-v4/GET_getBySummonerName
      * 
@@ -75,7 +79,7 @@ class Summoner
      * @param api_callback        function to call when request is complete (optional)
      * @return void
      */
-    getDataByName(summoner_name, data_flags = SUMMONER_API_DATA.SUMMONER, api_callback = null)
+    queryDataByName(summoner_name, data_flags = SUMMONER_API_DATA.SUMMONER, api_callback = null)
     {
         this.m_eTargetDataFlags   = data_flags;
         this.m_nRequestStatus    |= SUMMONER_API_DATA.SUMMONER;
@@ -87,12 +91,12 @@ class Summoner
         Api.Request(Api.BuildURL(`lol/summoner/v4/summoners/by-name/${summoner_name}`), 
         function(error, response, body)
         {
-            Summoner._api_callback(error, response, body, api_callback, self, SUMMONER_API_DATA.SUMMONER);
+            Summoner._summoner_api_callback(error, response, body, api_callback, self, SUMMONER_API_DATA.SUMMONER);
         });
     }
 
     /**
-     * Gets summoner data from Riot API by encrypted account id
+     * Query summoner data from Riot API by encrypted account id
      *
      * https://developer.riotgames.com/api-methods/#summoner-v4/GET_getByAccountId
      * 
@@ -102,7 +106,7 @@ class Summoner
      * @param api_callback        function to call when request is complete (optional)
      * @return void
      */
-    getDataByAccountID(encrypted_id, data_flags = SUMMONER_API_DATA.SUMMONER, api_callback = null)
+    queryDataByAccountID(encrypted_id, data_flags = SUMMONER_API_DATA.SUMMONER, api_callback = null)
     {
         this.m_eTargetDataFlags   = data_flags;
         this.m_nRequestStatus    |= SUMMONER_API_DATA.SUMMONER;
@@ -114,12 +118,12 @@ class Summoner
         Api.Request(Api.BuildURL(`lol/summoner/v4/summoners/by-account/${encrypted_id}`), 
         function(error, response, body)
         {
-            Summoner._api_callback(error, response, body, api_callback, self, SUMMONER_API_DATA.SUMMONER);
+            Summoner._summoner_api_callback(error, response, body, api_callback, self, SUMMONER_API_DATA.SUMMONER);
         });
     }
 
     /**
-     * Gets summoner data from Riot API by encrypted PUUID (Player Universally Unique IDentifier)
+     * Query summoner data from Riot API by encrypted PUUID (Player Universally Unique IDentifier)
      *
      * https://developer.riotgames.com/api-methods/#summoner-v4/GET_getByPUUID
      * 
@@ -129,7 +133,7 @@ class Summoner
      * @param api_callback        function to call when request is complete (optional)
      * @return void
      */
-    getDataByPUUID(puu_id, data_flags = SUMMONER_API_DATA.SUMMONER, api_callback = null)
+    queryDataByPUUID(puu_id, data_flags = SUMMONER_API_DATA.SUMMONER, api_callback = null)
     {
         this.m_eTargetDataFlags   = data_flags;
         this.m_nRequestStatus    |= SUMMONER_API_DATA.SUMMONER;
@@ -141,12 +145,12 @@ class Summoner
         Api.Request(Api.BuildURL(`lol/summoner/v4/summoners/by-puuid/${puu_id}`), 
         function(error, response, body)
         {
-            Summoner._api_callback(error, response, body, api_callback, self, SUMMONER_API_DATA.SUMMONER);
+            Summoner._summoner_api_callback(error, response, body, api_callback, self, SUMMONER_API_DATA.SUMMONER);
         });
     }
 
     /**
-     * Gets summoner data from Riot API by encrypted summoner id
+     * Query summoner data from Riot API by encrypted summoner id
      *
      * https://developer.riotgames.com/api-methods/#summoner-v4/GET_getBySummonerId
      * 
@@ -156,7 +160,7 @@ class Summoner
      * @param api_callback        function to call when request is complete (optional)
      * @return void
      */
-    getDataBySummonerID(summoner_id, data_flags = SUMMONER_API_DATA.SUMMONER, api_callback = null)
+    queryDataBySummonerID(summoner_id, data_flags = SUMMONER_API_DATA.SUMMONER, api_callback = null)
     {
         this.m_eTargetDataFlags   = data_flags;
         this.m_nRequestStatus    |= SUMMONER_API_DATA.SUMMONER;
@@ -173,7 +177,7 @@ class Summoner
     }
 
     /**
-     * Gets total mastery score from Riot API by encrypted summoner id
+     * Query total mastery score from Riot API by encrypted summoner id
      *
      * https://developer.riotgames.com/api-methods/#champion-mastery-v4/GET_getChampionMasteryScore
      * 
@@ -181,7 +185,7 @@ class Summoner
      * @param api_callback        function to call when request is complete (optional)
      * @return void
      */
-    getTotalMasteryScore(summoner_id, api_callback = null)
+    queryTotalMasteryScore(summoner_id, api_callback = null)
     {
         this.m_nRequestStatus |= SUMMONER_API_DATA.TOTAL_MASTERY;
 
@@ -194,7 +198,7 @@ class Summoner
     }
 
     /**
-     * Gets all summoner champion masteries from Riot API by encrypted summoner id
+     * Query all summoner champion masteries from Riot API by encrypted summoner id
      *
      * https://developer.riotgames.com/api-methods/#champion-mastery-v4/GET_getAllChampionMasteries
      * 
@@ -202,7 +206,7 @@ class Summoner
      * @param api_callback        function to call when request is complete (optional)
      * @return void
      */
-    getChampionMasteries(summoner_id, api_callback = null)
+    queryChampionMasteries(summoner_id, api_callback = null)
     {
         this.m_nRequestStatus |= SUMMONER_API_DATA.CHAMPION_MASTERY;
 
@@ -215,7 +219,7 @@ class Summoner
     }
 
     /**
-     * Gets summoner league data from Riot API by summoner id
+     * Query summoner league data from Riot API by summoner id
      *
      * https://developer.riotgames.com/api-methods/#league-v4/GET_getLeagueEntriesForSummoner
      * 
@@ -223,7 +227,7 @@ class Summoner
      * @param api_callback         function to call when request is complete (optional)
      * @return void
      */
-    getLeagueData(summoner_id, api_callback = null)
+    queryLeagueData(summoner_id, api_callback = null)
     {
         this.m_nRequestStatus |= SUMMONER_API_DATA.LEAGUE;
 
@@ -236,7 +240,7 @@ class Summoner
     }
 
     /**
-     * Gets summoner match data from Riot API by summoner id
+     * Query summoner match data from Riot API by account id
      *
      * https://developer.riotgames.com/api-methods/#match-v4/GET_getMatchlist
      * 
@@ -251,7 +255,7 @@ class Summoner
      * @param beginIndex           amount of matches to search for, combined with end index (optional)
      * @return void
      */
-    getMatchData(account_id, api_callback = null, champion_id = null, queue_id = null, season_id = null, endTime = null, beginTime = null, endIndex = null, beginIndex = null)
+    queryMatchData(account_id, api_callback = null, champion_id = null, queue_id = null, season_id = null, endTime = null, beginTime = null, endIndex = null, beginIndex = null)
     {
         this.m_nRequestStatus |= SUMMONER_API_DATA.MATCH_LIST;
 
@@ -273,10 +277,31 @@ class Summoner
             params += `&beginIndex=${beginIndex}`
 
         var self = this;
-        Api.Request(Api.BuildURLParams(`/lol/match/v4/matchlists/by-account/${account_id}`, params), 
+        Api.Request(Api.BuildURLParams(`lol/match/v4/matchlists/by-account/${account_id}`, params), 
         function(error, response, body)
         {
             Summoner._summoner_api_callback(error, response, body, api_callback, self, SUMMONER_API_DATA.MATCH_LIST);
+        });
+    }
+
+    /**
+     * Query summoner active game data from Riot API by summoner id
+     *
+     * https://developer.riotgames.com/api-methods/#spectator-v4/GET_getCurrentGameInfoBySummoner
+     * 
+     * @param summoner_id           account id (string) (json field: accountId)
+     * @param api_callback         function to call when request is complete (optional)
+     * @return void
+     */
+    queryActiveGameData(summoner_id, api_callback = null)
+    {
+        this.m_nRequestStatus |= SUMMONER_API_DATA.ACTIVE_GAME;
+
+        var self = this;
+        Api.Request(Api.BuildURL(`lol/spectator/v4/active-games/by-summoner/${summoner_id}`), 
+        function(error, response, body)
+        {
+            Summoner._summoner_api_callback(error, response, body, api_callback, self, SUMMONER_API_DATA.ACTIVE_GAME);
         });
     }
 
@@ -301,26 +326,34 @@ class Summoner
         if(validCall)
         {
             json = JSON.parse(body);
-            
+
             switch(type)
             {
                 case SUMMONER_API_DATA.SUMMONER:
-                    summoner.parseSummonerJSON(json);
+                    var newSum = Summoner.parseSummonerJSON(json);
+
+                    summoner.m_iProfileIconID = newSum.m_iProfileIconID;
+                    summoner.m_szName         = newSum.m_szName;
+                    summoner.m_szPUUID        = newSum.m_szPUUID;
+                    summoner.m_iSummonerLevel = newSum.m_iSummonerLevel;
+                    summoner.m_iRevisionDate  = newSum.m_iRevisionDate;
+                    summoner.m_szSummonerID   = newSum.m_szSummonerID;
+                    summoner.m_szAccountID    = newSum.m_szAccountID;
                     break;
                 case SUMMONER_API_DATA.CHAMPION_MASTERY:
-                    summoner.parseChampionMasteryJSON(json);
+                    summoner.m_ChampionMasteries = Mastery.Mastery.parseChampionMasteryJSON(json);
                     break;
                 case SUMMONER_API_DATA.TOTAL_MASTERY:
-                    summoner.parseTotalMasteryJSON(json);
+                    summoner.m_iTotalMasteryScore = Mastery.Mastery.parseTotalMasteryJSON(json);
                     break;
                 case SUMMONER_API_DATA.LEAGUE:
-                    summoner.parseLeagueJSON(json);
+                    summoner.m_Leagues = League.SummonerLeague.parseLeagueJSON(json);
                     break;
                 case SUMMONER_API_DATA.ACTIVE_GAME:
-
+                    summoner.m_ActiveGame = Game.ActiveGame.parseActiveGameJSON(json);
                     break;
                 case SUMMONER_API_DATA.MATCH_LIST:
-                    summoner.parseMatchListJSON(json);
+                    summoner.m_Matches = Match.SummonerMatch.parseMatchListJSON(json);
                     break;
             }
         }
@@ -339,7 +372,7 @@ class Summoner
             // If we still have API calls to complete
 
             // While bit is a bit flag set in target flags AND
-            // bit is not a flag thats set in currnet flags AND
+            // bit is not a flag thats set in current flags AND
             // bit is less than max bit flags in SUMMONER_API_DATA enum
 
             var bit = 1;
@@ -352,16 +385,16 @@ class Summoner
             switch(bit)
             {
                 case SUMMONER_API_DATA.CHAMPION_MASTERY:
-                    summoner.getChampionMasteries(summoner.m_szSummonerID, api_callback);
+                    summoner.queryChampionMasteries(summoner.m_szSummonerID, api_callback);
                     break;
                 case SUMMONER_API_DATA.TOTAL_MASTERY:
-                    summoner.getTotalMasteryScore(summoner.m_szSummonerID, api_callback);
+                    summoner.queryTotalMasteryScore(summoner.m_szSummonerID, api_callback);
                     break;
                 case SUMMONER_API_DATA.LEAGUE:
-                    summoner.getLeagueData(summoner.m_szSummonerID, api_callback);
+                    summoner.queryLeagueData(summoner.m_szSummonerID, api_callback);
                     break;
                 case SUMMONER_API_DATA.ACTIVE_GAME:
-
+                    summoner.queryActiveGameData(summoner.m_szSummonerID, api_callback);
                     break;
             }
         } 
@@ -371,117 +404,26 @@ class Summoner
      * Parses summoner JSON data
      *
      * @param json                 json data (string)
-     * @return void
+     * @return Summoner
      */
-    parseSummonerJSON(json)
+    static parseSummonerJSON(json)
     {
-        this.m_iProfileIconID = json.profileIconId;
-        this.m_szName         = json.name;
-        this.m_szPUUID        = json.puuid;
-        this.m_iSummonerLevel = json.summonerLevel;
-        this.m_iRevisionDate  = json.revisionDate;
-        this.m_szSummonerID   = json.id;
-        this.m_szAccountID    = json.accountId;
+        var summoner = new Summoner();
+        summoner.m_iProfileIconID = json.profileIconId;
+        summoner.m_szName         = json.name;
+        summoner.m_szPUUID        = json.puuid;
+        summoner.m_iSummonerLevel = json.summonerLevel;
+        summoner.m_iRevisionDate  = json.revisionDate;
+        summoner.m_szSummonerID   = json.id;
+        summoner.m_szAccountID    = json.accountId;
+        return summoner;
     }
 
     /**
-     * Parses total mastery score JSON data
-     *
-     * @param json                 json data (string)
-     * @return void
+     * Get summoner league (Ranked Solo / Ranked Flex) object
+     * 
+     * @param queue_type         queue type (QUEUE_TYPE)
      */
-    parseTotalMasteryJSON(json)
-    {
-        this.m_iTotalMasteryScore = json;
-    }
-
-    /**
-     * Parses champion mastery JSON data (List)
-     *
-     * @param json                 json data (string)
-     * @return void
-     */
-    parseChampionMasteryJSON(json)
-    {
-        for(var i = 0; i < json.length; i++)
-        {
-            var mastery = new Mastery.Mastery();
-            mastery.parseMasteryJSON(json[i]);
-            this.m_ChampionMasteries.push(mastery);
-        }
-    }
-
-    /**
-     * Parses summoner league JSON data
-     *
-     * @param json                 json data (string)
-     * @return void
-     */
-    parseLeagueJSON(json)
-    {
-        this.m_Leagues = [];
-        for(var i = 0; i < json.length; i++)
-        {
-            var leagueObj = json[i];
-
-            var miniSeries = null;
-            var jsonMiniSeries = json[i].miniSeries;
-            if(jsonMiniSeries != null)
-            {
-                miniSeries = new League.MiniSeriesDTO(jsonMiniSeries.progress, 
-                                                      jsonMiniSeries.target, 
-                                                      jsonMiniSeries.losses, 
-                                                      jsonMiniSeries.wins);
-            }
-
-            var league = new League.SummonerLeague(leagueObj.queueType,
-                                                   leagueObj.summonerName,
-                                                   leagueObj.hotStreak,
-                                                   miniSeries,
-                                                   leagueObj.wins,
-                                                   leagueObj.veteran,
-                                                   leagueObj.losses,
-                                                   leagueObj.rank,
-                                                   leagueObj.leagueId,
-                                                   leagueObj.inactive,
-                                                   leagueObj.freshBlood,
-                                                   leagueObj.tier,
-                                                   leagueObj.summonerId,
-                                                   leagueObj.leaguePoints);
-
-            league.setQueueType(League.QueueTypeNameToId(league.m_szQueueType));
-            this.m_Leagues.push(league);
-        }
-    }
-
-    /**
-     * Parses summoner match list JSON data
-     *
-     * @param json                 json data (string)
-     * @return void
-     */
-    parseMatchListJSON(json)
-    {
-        this.m_Matches = [];
-        var matches = json.matches;
-
-        for(var i = 0; i < matches.length; i++)
-        {
-            var matchObj = matches[i];
-
-            var match = new Match.SummonerMatch(matchObj.lane,
-                                                matchObj.gameId,
-                                                matchObj.champion,
-                                                matchObj.platformId,
-                                                matchObj.timestamp,
-                                                matchObj.queue,
-                                                matchObj.role,
-                                                matchObj.season);
-           
-            this.m_Matches.push(match);
-        }
-    }
-
     getSummonerLeague(queue_type)
     {
         for(var i = 0; i < this.m_Leagues.length; i++)
