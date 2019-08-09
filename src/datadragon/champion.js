@@ -19,7 +19,7 @@ function QueryChampionData(api_callback = null, patch = DataDragon.DDRAGON_PATCH
     var finalUrl = `${DataDragon.DDRAGON_URL}/cdn/${patch}/data/${language}/champion.json`;
     console.log(`Grabbing champion data from ${finalUrl}...`);
     var self = this;
-    Api.Request(`${DataDragon.DDRAGON_URL}/cdn/${patch}/data/${language}/champion.json`, 
+    Api.Request(finalUrl, 
     function(error, response, body)
     {
         var json = JSON.parse(body);
