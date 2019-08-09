@@ -1,5 +1,8 @@
 const Api = require('./api.js');
 
+/**
+ * BannedChampion Class
+ */
 class BannedChampion
 {
     constructor(pick_turn = null, 
@@ -10,8 +13,41 @@ class BannedChampion
         this.m_iChampionID = champion_id;
         this.m_iTeamID = team_id;
     }
+
+    /**
+     * Get pick turn
+     * 
+     * @return int
+     */
+    getPickTurn()
+    {
+        return this.m_iPickTurn;
+    }
+
+    /**
+     * Get champion id
+     * 
+     * @return int
+     */
+    getChampionID()
+    {
+        return this.m_iChampionID;
+    }
+
+    /**
+     * Get team id
+     * 
+     * @return int
+     */
+    getTeamID()
+    {
+        return this.m_iTeamID;
+    }
 }
 
+/**
+ * Participant Class
+ */
 class Participant
 {
     constructor(profile_icon_id = null, 
@@ -36,8 +72,91 @@ class Participant
         this.m_iSummonerSpell1ID = summoner_spell_1_id;
         this.m_szSummonerID = summoner_id;
     }
+
+    /**
+     * Get summoner name
+     * 
+     * @return string
+     */
+    getName()
+    {
+        return this.m_szSummonerName;
+    }
+
+    /**
+     * Get the id of the champion the player is playing
+     * 
+     * @return int
+     */
+    getChampionID()
+    {
+        return this.m_iChampionID;
+    }
+
+    /**
+     * Returns true if the player is a bot
+     * 
+     * @return bool
+     */
+    isBot()
+    {
+        return this.m_bBot;
+    }
+
+    /**
+     * Get runes object
+     * 
+     * @return Runes
+     */
+    getRunes()
+    {
+        return this.m_Runes;
+    }
+
+    /**
+     * Get summoner spell 1 ID
+     * 
+     * @return int
+     */
+    getSummonerSpell1()
+    {
+        return this.m_iSummonerSpell1ID;
+    }
+
+    /**
+     * Get summoner spell 2 ID
+     * 
+     * @return int
+     */
+    getSummonerSpell2()
+    {
+        return this.m_iSummonerSpell2ID;
+    }
+
+    /**
+     * Get team id
+     * 
+     * @return int
+     */
+    getTeamID()
+    {
+        return this.m_iTeamID;
+    }
+
+    /**
+     * Get summoner id
+     * 
+     * @return string
+     */
+    getSummonerID()
+    {
+        return this.m_szSummonerID;
+    }
 }
 
+/**
+ * GameCustomizationObject Class
+ */
 class GameCustomizationObject
 {
     constructor(category = null, 
@@ -46,8 +165,31 @@ class GameCustomizationObject
         this.m_szCategory = category;
         this.m_szContent = content;
     }
+
+    /**
+     * Get category
+     * 
+     * @return string
+     */
+    getCategory()
+    {
+        return this.m_szCategory;
+    }
+
+    /**
+     * Get content
+     * 
+     * @return string
+     */
+    getContent()
+    {
+        return this.m_szContent;
+    }
 }
 
+/**
+ * Runes Class
+ */
 class Runes
 {
     constructor(primary_rune_tree = null,  // Perk Style
@@ -58,8 +200,41 @@ class Runes
         this.m_RuneIDs = rune_ids;
         this.m_iSecondaryRuneTree = secondary_rune_tree;
     }
+
+    /**
+     * Get primary rune tree ID
+     * 
+     * @return int
+     */
+    getPrimaryRuneTree()
+    {
+        return this.m_iPrimaryRuneTree;
+    }
+
+    /**
+     * Get rune IDs list
+     * 
+     * @return int[]
+     */
+    getRuneIDs()
+    {
+        return this.m_RuneIDs;
+    }
+
+    /**
+     * Get secondary rune tree ID
+     * 
+     * @return int
+     */
+    getSecondaryRuneTree()
+    {
+        return this.m_iSecondaryRuneTree;
+    }
 }
 
+/**
+ * ActiveGame Class
+ */
 class ActiveGame
 {
     constructor(game_id = null, 
@@ -141,7 +316,7 @@ class ActiveGame
                                               jsonParticipant.spell2Id,
                                               jsonParticipant.teamId,
                                               jsonParticipant.spell1Id,
-                                              jsonParticipant.summonerId!=null?sonParticipant.summonerId:null);
+                                              jsonParticipant.summonerId!=null?jsonParticipant.summonerId:null);
             participants.push(participant);
         }
 
@@ -169,8 +344,121 @@ class ActiveGame
 
         return activeGame;
     }
+
+    /**
+     * Get game id
+     * 
+     * @return int
+     */
+    getGameID()
+    {
+        return this.m_iGameID;
+    }
+
+    /**
+     * Get game start time
+     * 
+     * @return int
+     */
+    getGameStartTime()
+    {
+        return this.m_iGameStartTime;
+    }
+
+    /**
+     * Get platform id
+     * 
+     * @return string
+     */
+    getPlatformID()
+    {
+        return this.m_szPlatformID;
+    }
+
+    /**
+     * Get game mode
+     * 
+     * @return string
+     */
+    getGameMode()
+    {
+        return this.m_szGameMode;
+    }
+
+    /**
+     * Get map id
+     * 
+     * @return int
+     */
+    getMapID()
+    {
+        return this.m_iMapID;
+    }
+
+    /**
+     * Get game type
+     * 
+     * @return string
+     */
+    getGameType()
+    {
+        return this.m_szGameType;
+    }
+
+    /**
+     * Get game queue config id
+     * 
+     * @return int
+     */
+    getGameQueueConfigID()
+    {
+        return this.m_iGameQueueConfigID;
+    }
+
+    /**
+     * Get observer key
+     * 
+     * @return string
+     */
+    getObserverKey()
+    {
+        return this.m_szObserverKey;
+    }
+
+    /**
+     * Get participants list
+     * 
+     * @return Participant[]
+     */
+    getParticipants()
+    {
+        return this.m_Participants;
+    }
+
+    /**
+     * Get game length
+     * 
+     * @return int
+     */
+    getGameLength()
+    {
+        return this.m_iGameLength;
+    }
+
+    /**
+     * Get banned champions list
+     * 
+     * @return BannedChampion[]
+     */
+    getBannedChampions()
+    {
+        return this.m_BannedChampions;
+    }
 }
 
+/**
+ * FeaturedGames Class
+ */
 class FeaturedGames
 {
     constructor(api_callback = null)
@@ -230,6 +518,26 @@ class FeaturedGames
             featuredGames.m_GameList.push(game);
         }
         return featuredGames;
+    }
+
+    /**
+     * Get client refresh interval
+     * 
+     * @return int
+     */
+    getClientRefreshInterval()
+    {
+        return this.m_iClientRefreshInterval;
+    }
+
+    /**
+     * Get a list of featured games
+     * 
+     * @return ActiveGame[]
+     */
+    getGames()
+    {
+        return this.m_iClientRefreshInterval;
     }
 }
 

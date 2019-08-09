@@ -341,19 +341,19 @@ class Summoner
                     summoner.m_szAccountID    = newSum.m_szAccountID;
                     break;
                 case SUMMONER_API_DATA.CHAMPION_MASTERY:
-                    summoner.m_ChampionMasteries = Mastery.Mastery.parseChampionMasteryJSON(json);
+                    summoner.m_ChampionMasteries = Mastery.Mastery.parseChampionMasteriesJSON(json);
                     break;
                 case SUMMONER_API_DATA.TOTAL_MASTERY:
                     summoner.m_iTotalMasteryScore = Mastery.Mastery.parseTotalMasteryJSON(json);
                     break;
                 case SUMMONER_API_DATA.LEAGUE:
-                    summoner.m_Leagues = League.SummonerLeague.parseLeagueJSON(json);
+                    summoner.m_Leagues = SummonerLeague.parseLeagueJSON(json);
                     break;
                 case SUMMONER_API_DATA.ACTIVE_GAME:
                     summoner.m_ActiveGame = Game.ActiveGame.parseActiveGameJSON(json);
                     break;
                 case SUMMONER_API_DATA.MATCH_LIST:
-                    summoner.m_Matches = Match.SummonerMatch.parseMatchListJSON(json);
+                    summoner.m_Matches = SummonerMatch.parseMatchListJSON(json);
                     break;
             }
         }
@@ -420,9 +420,92 @@ class Summoner
     }
 
     /**
+     * Get current request status bitflag (Check SUMMONER_API_DATA)
+     * 
+     * This returns 0 if theres nothing being requested, if its not 0, something is currently being requested from Riot API
+     * 
+     * @return int
+     */
+    getRequestStatus()
+    {
+        return this.m_nRequestStatus;
+    }
+
+    /**
+     * Get profile icon ID
+     * 
+     * @return int
+     */
+    getProfileIconID()
+    {
+        return this.m_iProfileIconID;
+    }
+
+    /**
+     * Get summoner name
+     * 
+     * @return string
+     */
+    getName()
+    {
+        return this.m_szName;
+    }
+
+    /**
+     * Get PUUID (Player Universally Unique ID)
+     * 
+     * @return string
+     */
+    getPUUID()
+    {
+        return this.m_szPUUID;
+    }
+
+    /**
+     * Get summoner level
+     * 
+     * @return int
+     */
+    getLevel()
+    {
+        return this.m_iSummonerLevel;
+    }
+
+    /**
+     * Get revision date
+     * 
+     * @return int
+     */
+    getRevisionDate()
+    {
+        return this.m_iRevisionDate;
+    }
+
+    /**
+     * Get summoner id
+     * 
+     * @return string
+     */
+    getSummonerID()
+    {
+        return this.m_szSummonerID;
+    }
+
+    /**
+     * Get account id
+     * 
+     * @return string
+     */
+    getAccountID()
+    {
+        return this.m_szAccountID;
+    }
+
+    /**
      * Get summoner league (Ranked Solo / Ranked Flex) object
      * 
      * @param queue_type         queue type (QUEUE_TYPE)
+     * @return SummonerLeague
      */
     getSummonerLeague(queue_type)
     {
@@ -433,11 +516,440 @@ class Summoner
         }
         return null;
     }
+
+    /**
+     * Get champion mastery list
+     * 
+     * @return Mastery[]
+     */
+    getChampionMasteries()
+    {
+        return this.m_ChampionMasteries;
+    }
+
+    /**
+     * Get champion mastery by champion id
+     * 
+     * @return Mastery
+     */
+    getChampionMastery(champion_id)
+    {
+        return this.m_ChampionMasteries.get(champion_id);
+    }
+
+    /**
+     * Get active game
+     * 
+     * @return ActiveGame
+     */
+    getActiveGame()
+    {
+        return this.m_ActiveGame;
+    }
+
+    /**
+     * Get match list
+     * 
+     * @return SummonerMatch[]
+     */
+    getMatchList()
+    {
+        return this.m_Matches;
+    }
+
+    /**
+     * Get total mastery score
+     * 
+     * @return int
+     */
+    getTotalMasteryScore()
+    {
+        return this.m_iTotalMasteryScore;
+    }
+}
+
+/**
+ * SummonerMatch Class
+ */
+class SummonerMatch
+{
+    constructor(lane = null, 
+                game_id = null,
+                champion = null,
+                platform_id = null,
+                timestamp = null,
+                queue = null,
+                role = null,
+                season = null)
+    {
+        this.m_szLane = lane;
+        this.m_iGameID = game_id;
+        this.m_iChampionID = champion;
+        this.m_szPlatformID = platform_id;
+        this.m_iTimeStamp = timestamp;
+        this.m_iQueue = queue;
+        this.m_szRole = role;
+        this.m_iSeason = season;
+    }
+
+    /**
+     * Parses summoner match list JSON data
+     *
+     * @param json                 json data (string)
+     * @return SummonerMatch[]
+     */
+    static parseMatchListJSON(json)
+    {
+        var matches = [];
+        var jsonMatches = json.matches;
+
+        for(var i = 0; i < jsonMatches.length; i++)
+        {
+            var matchObj = matches[i];
+
+            var match = new Match(matchObj.lane,
+                    matchObj.gameId,
+                    matchObj.champion,
+                    matchObj.platformId,
+                    matchObj.timestamp,
+                    matchObj.queue,
+                    matchObj.role,
+                    matchObj.season);
+           
+            matches.push(match);
+        }
+        return matches;
+    }
+
+    /**
+     * Get what lane the player played
+     * 
+     * @return string
+     */
+    getLane()
+    {
+        return this.m_szLane;
+    }
+
+    /**
+     * Get current game id
+     * 
+     * @return int
+     */
+    getGameID()
+    {
+        return this.m_iGameID;
+    }
+
+    /**
+     * Get champion id
+     * 
+     * @return int
+     */
+    getChampionID()
+    {
+        return this.m_iChampionID;
+    }
+
+    /**
+     * Get platform id
+     * 
+     * @return string
+     */
+    getPlatformID()
+    {
+        return this.m_szPlatformID;
+    }
+
+    /**
+     * Get timestmap
+     * 
+     * @return int
+     */
+    getTimeStamp()
+    {
+        return this.m_iTimeStamp;
+    }
+
+    /**
+     * Get queue
+     * 
+     * @return int
+     */
+    getQueue()
+    {
+        return this.m_iQueue;
+    }
+
+    /**
+     * Get role
+     * 
+     * @return string
+     */
+    getRole()
+    {
+        return this.m_szRole;
+    }
+
+    /**
+     * Get season
+     * 
+     * @return int
+     */
+    getSeason()
+    {
+        return this.m_iSeason;
+    }
+}
+
+/**
+ * SummonerLeague Class
+ */
+class SummonerLeague
+{
+    constructor(queue_type = null, 
+                summoner_name = null,
+                hot_streak = null,
+                mini_series = null,
+                wins = null,
+                veteran = null,
+                losses = null,
+                rank = null,
+                league_id = null,
+                inactive = null,
+                fresh_blood = null,
+                tier = null,
+                summoner_id = null,
+                league_points = null)
+    {
+        this.m_szQueueType = queue_type;
+        this.m_szSummonerName = summoner_name;
+        this.m_bHotStreak = hot_streak;
+        this.m_MiniSeries = mini_series;
+        this.m_iWins = wins;
+        this.m_bVeteran = veteran;
+        this.m_iLosses = losses;
+        this.m_szRank = rank;
+        this.m_szLeagueID = league_id;
+        this.m_bInactive = inactive;
+        this.m_bFreshBlood = fresh_blood;
+        this.m_szTier = tier;
+        this.m_szSummonerID = summoner_id;
+        this.m_iLeaguePoints = league_points;
+
+        this.m_eQueueType = QUEUE_TYPE.INVALID;
+    }
+
+    /**
+     * Get queue type string
+     * 
+     * @return string
+     */
+    getQueueTypeString()
+    {
+        return this.m_szQueueType;
+    }
+
+    /**
+     * Get summoner name
+     * 
+     * @return string
+     */
+    getSummonerName()
+    {
+        return this.m_szSummonerName;
+    }
+
+    /**
+     * Returns true if the player is on a hot streak
+     * 
+     * @return bool
+     */
+    isHotStreak()
+    {
+        return this.m_bHotStreak;
+    }
+
+    /**
+     * Get MiniSeriesDTO object (promos)
+     * 
+     * @return MiniSeriesDTO
+     */
+    getMiniSeries()
+    {
+        return this.m_MiniSeries;
+    }
+
+    /**
+     * Get amount of wins
+     * 
+     * @return int
+     */
+    getWins()
+    {
+        return this.m_iWins;
+    }
+
+    /**
+     * Returns true if player is a veteran
+     * 
+     * @return bool
+     */
+    isVeteran()
+    {
+        return this.m_bVeteran;
+    }
+
+    /**
+     * Get amount of losses
+     * 
+     * @return int
+     */
+    getLosses()
+    {
+        return this.m_iLosses;
+    }
+
+    /**
+     * Get rank (IV - III - II - I)
+     * 
+     * @return string
+     */
+    getRank()
+    {
+        return this.m_szRank;
+    }
+
+    /**
+     * Get league id
+     * 
+     * @return string
+     */
+    getLeagueID()
+    {
+        return this.m_szLeagueID;
+    }
+
+    /**
+     * Returns true if player is inactive
+     * 
+     * @return bool
+     */
+    isInactive()
+    {
+        return this.m_bInactive;
+    }
+
+    /**
+     * Returns true if player is new
+     * 
+     * @return bool
+     */
+    isFreshBlood()
+    {
+        return this.m_bFreshBlood;
+    }
+
+    /**
+     * Get tier (Iron - Challenger)
+     * 
+     * @return string
+     */
+    getTier()
+    {
+        return this.m_szTier;
+    }
+
+    /**
+     * Get summoner id
+     * 
+     * @return string
+     */
+    getSummonerID()
+    {
+        return this.m_szSummonerID;
+    }
+
+    /**
+     * Get amount of league points (LP)
+     * 
+     * @return int
+     */
+    getLeaguePoints()
+    {
+        return this.m_iLeaguePoints;
+    }
+
+    /**
+     * Get queue type enum
+     * 
+     * @return int
+     */
+    getQueueTypeE()
+    {
+        return this.m_eQueueType;
+    }
+
+    /**
+     * Set queue type enum
+     * 
+     * @param queue_type        (league.js > QUEUE_TYPE)
+     * @return void
+     */
+    setQueueTypeE(queue_type)
+    {
+        this.m_eQueueType = queue_type;
+    }
+
+    /**
+     * Parses summoner league JSON data
+     *
+     * @param json                 json data (string)
+     * @return SummonerLeague[]
+     */
+    static parseLeagueJSON(json)
+    {
+        var leagues = [];
+        for(var i = 0; i < json.length; i++)
+        {
+            var leagueObj = json[i];
+
+            var miniSeries = null;
+            var jsonMiniSeries = json[i].miniSeries;
+            if(jsonMiniSeries != null)
+            {
+                miniSeries = new MiniSeriesDTO(jsonMiniSeries.progress, 
+                                               jsonMiniSeries.target, 
+                                               jsonMiniSeries.losses, 
+                                               jsonMiniSeries.wins);
+            }
+
+            var league = new SummonerLeague(leagueObj.queueType,
+                                            leagueObj.summonerName,
+                                            leagueObj.hotStreak,
+                                            miniSeries,
+                                            leagueObj.wins,
+                                            leagueObj.veteran,
+                                            leagueObj.losses,
+                                            leagueObj.rank,
+                                            leagueObj.leagueId,
+                                            leagueObj.inactive,
+                                            leagueObj.freshBlood,
+                                            leagueObj.tier,
+                                            leagueObj.summonerId,
+                                            leagueObj.leaguePoints);
+
+            league.setQueueType(League.QueueTypeNameToId(league.m_szQueueType));
+            leagues.push(league);
+        }
+        return leagues;
+    }
 }
 
 module.exports =
 {
     Summoner,
+    Match,
     
     SUMMONER_API_DATA
 };

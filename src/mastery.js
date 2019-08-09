@@ -18,8 +18,6 @@ class Mastery
         this.m_iChampionPointsSinceLastLevel = -1;
         this.m_szSummonerID = null;
 
-        this.m_eRequestStatus = Api.REQUEST_STATUS.NONE;
-
         if(summoner_id != null && champion_id != null)
             this.queryData(summoner_id, api_callback);
     }
@@ -84,14 +82,14 @@ class Mastery
      * @param json                 json data (string)
      * @return Mastery[]
      */
-    static parseSummonerMasteriesJSON(json)
+    static parseChampionMasteriesJSON(json)
     {
-        var masteries = [];
+        var masteries = new Map();
         for(var i = 0; i < json.length; i++)
         {
             var mastery = new Mastery();
             mastery.parseMasteryJSON(json[i]);
-            masteries.push(mastery);
+            masteries.set(mastery.m_iChampionID, mastery);
         }
         return masteries;
     }
@@ -105,6 +103,96 @@ class Mastery
     static parseTotalMasteryJSON(json)
     {
         return json;
+    }
+
+    /**
+     * Returns true if chest is granted
+     * 
+     * @return bool
+     */
+    isChestGranted()
+    {
+        return this.m_bChestGranted;
+    }
+
+    /**
+     * Get champion level
+     * 
+     * @return int
+     */
+    getChampionLevel()
+    {
+        return this.m_iChampionLevel;
+    }
+
+    /**
+     * Get champion points
+     * 
+     * @return int
+     */
+    getChampionPoints()
+    {
+        return this.m_iChampionPoints;
+    }
+
+    /**
+     * Get champion id
+     * 
+     * @return int
+     */
+    getChampionID()
+    {
+        return this.m_iChampionID;
+    }
+
+    /**
+     * Get champion points until next level
+     * 
+     * @return int
+     */
+    getChampionPointsUntilNextLevel()
+    {
+        return this.m_iChampionPointsUntilNextLevel;
+    }
+
+    /**
+     * Get last play time
+     * 
+     * @return int
+     */
+    getLastPlayTime()
+    {
+        return this.m_iLastPlayTime;
+    }
+
+    /**
+     * Get tokens earned
+     * 
+     * @return int
+     */
+    getTokensEarned()
+    {
+        return this.m_iTokensEarned;
+    }
+
+    /**
+     * Get champion points since last level
+     * 
+     * @return int
+     */
+    getChampionPointsSinceLastLevel()
+    {
+        return this.m_iChampionPointsSinceLastLevel;
+    }
+
+    /**
+     * Get csummoner id
+     * 
+     * @return string
+     */
+    getSummonerID()
+    {
+        return this.m_szSummonerID;
     }
 }
 
