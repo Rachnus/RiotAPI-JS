@@ -18,7 +18,7 @@ class Mastery
         this.m_iChampionPointsSinceLastLevel = -1;
         this.m_szSummonerID = null;
 
-        if(summoner_id != null && champion_id != null)
+        if(summoner_id != null && champion_id != null && api_callback != null)
             this.queryData(summoner_id, api_callback);
     }
 
@@ -31,7 +31,6 @@ class Mastery
      */
     queryData(summoner_id, champion_id, api_callback = null)
     {
-        this.m_eRequestStatus = Api.REQUEST_STATUS.REQUESTING; 
         var self = this;
         Api.Request(Api.BuildURL(`lol/champion-mastery/v4/champion-masteries/by-summoner/${summoner_id}/by-champion/${champion_id}`), function(error, response, body){
             Mastery._mastery_api_callback(error, response, body, api_callback, self);
@@ -41,8 +40,7 @@ class Mastery
     static _mastery_api_callback(error, response, body, api_callback, mastery)
     {
         var validCall = Api.IsValidApiCall(response.statusCode);
-        
-        mastery.m_eRequestStatus = Api.REQUEST_STATUS.DONE;
+
         console.log('error:', error); // Print the error if one occurred
         console.log('statusCode:', response && response.statusCode); // Print the response status code if a response was received
         console.log('body:', body); // Print the HTML for the Google homepage.
@@ -198,5 +196,5 @@ class Mastery
 
 module.exports =
 {
-	Mastery
+    Mastery
 };

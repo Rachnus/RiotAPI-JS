@@ -64,7 +64,7 @@ class Summoner
         // Active Game
         this.m_ActiveGame         = null;
 
-        if(summoner_name != null)
+        if(summoner_name != null && api_callback != null)
             this.queryDataByName(summoner_name, data_flags, api_callback);
     }
 
